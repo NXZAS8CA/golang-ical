@@ -6,28 +6,20 @@ import (
 	"os"
 )
 
+//TODO: add proper logging
+//TODO: add global config struct
+
 type Event struct {
-	SUMMARY string
-	UID     int
+	SUMMARY string //Title of event
+	UID     int    //ID of event
 	DTSTAMP string
 	DTSTART string
 	DTEND   string
 }
 
-func WriteEvents(filename string, e []Event) {
-	for _, element := range e {
-		writeEvent(filename, element)
-	}
-}
+func writeEvent(file *os.File, e Event) {
 
-func writeEvent(name string, e Event) {
-
-	f, err := os.OpenFile(name, os.O_APPEND, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-
+	//TODO: make content configurable
 	content := "BEGIN:VEVENT\r\n" +
 		"DTSTAMP:" + e.DTSTAMP + "\r\n" +
 		"DTSTART:" + e.DTSTART + "\r\n" +
@@ -36,46 +28,46 @@ func writeEvent(name string, e Event) {
 		"UID:" + fmt.Sprint(e.UID) + "\r\n" +
 		"END:VEVENT\r\n"
 
-	_, err = f.WriteString(content)
+	_, err := file.WriteString(content)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 }
 
-func InitFile(name string) {
-	f, err := os.Create(name)
+func initFile(name string) *os.File {
+	file, err := os.Create(name)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
 
+	//TODO: make config configurable
 	config := "BEGIN:VCALENDAR\r\n" +
 		"PRODID:SIMON\r\n" +
 		"CALSCALE:GREGORIAN\r\n" +
 		"NAME:scouttools\r\n" +
 		"VERSION:2.0\r\n"
 
-	_, err = f.WriteString(config)
+	_, err = file.WriteString(config)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-}
-
-func FinishFile(name string) {
-	f, err := os.OpenFile(name, os.O_APPEND, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-
-	f.WriteString("END:VCALENDAR")
+	return file
 }
 
 func DeleteFile(name string) {
-	err := os.Remove(name)
-	if err != nil {
+	if err := os.Remove(name); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func MakeFile(name string, events []Event) {
+	file := initFile(name)
+	defer file.Close()
+
+	for _, element := range events {
+		writeEvent(file, element)
+	}
+
+	file.WriteString("END:VCALENDAR")
 }

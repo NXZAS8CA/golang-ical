@@ -22,7 +22,7 @@ func WriteEvents(filename string, e []Event) {
 
 func writeEvent(name string, e Event) {
 
-	f, err := os.OpenFile(name, os.O_APPEND, 0644)
+	f, err := os.Create(name)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -64,7 +64,7 @@ func InitFile(name string) {
 }
 
 func FinishFile(name string) {
-	f, err := os.OpenFile(name, os.O_APPEND, 0644)
+	f, err := os.OpenFile(name, os.O_APPEND, os.ModeAppend)
 	if err != nil {
 		log.Fatal(err)
 	}

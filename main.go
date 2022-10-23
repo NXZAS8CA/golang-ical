@@ -34,6 +34,7 @@ func calHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
+	//TODO: global calendar and server config
 	log.Println("Starting Server at :8080")
 	http.HandleFunc("/cal", calHandler)
 	err := http.ListenAndServe(":8080", nil)

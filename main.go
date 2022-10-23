@@ -8,12 +8,12 @@ import (
 )
 
 func makeFile(name string) {
-	ical.InitFile(name)
+	filename := ical.InitFile(name)
 	//ical.WriteEvent(name, ical.Event{SUMMARY: "Joel", UID: 22, DTSTAMP: "20220728T205217Z", DTSTART: "20220916T203000Z", DTEND: "20220917T060000Z"})
 	//ical.WriteEvent(name, ical.Event{SUMMARY: "Simon", UID: 20, DTSTAMP: "20220728T205217Z", DTSTART: "20220916T203000Z", DTEND: "20220917T060000Z"})
-	ical.WriteEvents(name, []ical.Event{{SUMMARY: "Joel", UID: 22, DTSTAMP: "20220728T205217Z", DTSTART: "20220916T203000Z", DTEND: "20220917T060000Z"},
+	ical.WriteEvents(filename, []ical.Event{{SUMMARY: "Joel", UID: 22, DTSTAMP: "20220728T205217Z", DTSTART: "20220916T203000Z", DTEND: "20220917T060000Z"},
 		{SUMMARY: "Simon", UID: 23, DTSTAMP: "20220728T205217Z", DTSTART: "20220916T203000Z", DTEND: "20220917T060000Z"}})
-	ical.FinishFile(name)
+	ical.FinishFile(filename)
 
 }
 

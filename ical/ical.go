@@ -14,19 +14,27 @@ type Event struct {
 	DTEND   string
 }
 
-func WriteEvents(filename string, e []Event) {
+func WriteEvents(f *os.File, e []Event) {
 	for _, element := range e {
-		writeEvent(filename, element)
+
+		content := "BEGIN:VEVENT\r\n" +
+			"DTSTAMP:" + element.DTSTAMP + "\r\n" +
+			"DTSTART:" + element.DTSTART + "\r\n" +
+			"DTEND:" + element.DTEND + "\r\n" +
+			"SUMMARY:" + element.SUMMARY + "\r\n" +
+			"UID:" + fmt.Sprint(element.UID) + "\r\n" +
+			"END:VEVENT\r\n"
+
+		_, err := f.WriteString(content)
+		if err != nil {
+			log.Fatal(err)
+		}
+
 	}
+
 }
 
-func writeEvent(name string, e Event) {
-
-	f, err := os.Create(name)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
+func writeEvent(f *os.File, e Event) {
 
 	content := "BEGIN:VEVENT\r\n" +
 		"DTSTAMP:" + e.DTSTAMP + "\r\n" +
@@ -36,19 +44,18 @@ func writeEvent(name string, e Event) {
 		"UID:" + fmt.Sprint(e.UID) + "\r\n" +
 		"END:VEVENT\r\n"
 
-	_, err = f.WriteString(content)
+	_, err := f.WriteString(content)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 }
 
-func InitFile(name string) {
+func InitFile(name string) (f *os.File) {
 	f, err := os.Create(name)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
 
 	config := "BEGIN:VCALENDAR\r\n" +
 		"PRODID:SIMON\r\n" +
@@ -61,14 +68,10 @@ func InitFile(name string) {
 		log.Fatal(err)
 	}
 
+	return f
 }
 
-func FinishFile(name string) {
-	f, err := os.OpenFile(name, os.O_APPEND, os.ModeAppend)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
+func FinishFile(f *os.File) {
 
 	f.WriteString("END:VCALENDAR")
 }

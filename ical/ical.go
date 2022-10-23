@@ -14,7 +14,7 @@ type Event struct {
 	DTEND   string
 }
 
-func WriteEvents(f *os.File, e []Event) {
+func writeEvents(f *os.File, e []Event) {
 	for _, element := range e {
 
 		content := "BEGIN:VEVENT\r\n" +
@@ -34,24 +34,7 @@ func WriteEvents(f *os.File, e []Event) {
 
 }
 
-func writeEvent(f *os.File, e Event) {
-
-	content := "BEGIN:VEVENT\r\n" +
-		"DTSTAMP:" + e.DTSTAMP + "\r\n" +
-		"DTSTART:" + e.DTSTART + "\r\n" +
-		"DTEND:" + e.DTEND + "\r\n" +
-		"SUMMARY:" + e.SUMMARY + "\r\n" +
-		"UID:" + fmt.Sprint(e.UID) + "\r\n" +
-		"END:VEVENT\r\n"
-
-	_, err := f.WriteString(content)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-}
-
-func InitFile(name string) (f *os.File) {
+func initFile(name string) (f *os.File) {
 	f, err := os.Create(name)
 	if err != nil {
 		log.Fatal(err)
@@ -71,7 +54,11 @@ func InitFile(name string) (f *os.File) {
 	return f
 }
 
-func FinishFile(f *os.File) {
+func MakeFile(filename string, e []Event) {
+	f := initFile(filename)
+	defer f.Close()
+
+	writeEvents(f, e)
 
 	f.WriteString("END:VCALENDAR")
 }

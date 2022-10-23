@@ -7,16 +7,6 @@ import (
 	"net/http"
 )
 
-func makeFile(name string) {
-	filename := ical.InitFile(name)
-	//ical.WriteEvent(name, ical.Event{SUMMARY: "Joel", UID: 22, DTSTAMP: "20220728T205217Z", DTSTART: "20220916T203000Z", DTEND: "20220917T060000Z"})
-	//ical.WriteEvent(name, ical.Event{SUMMARY: "Simon", UID: 20, DTSTAMP: "20220728T205217Z", DTSTART: "20220916T203000Z", DTEND: "20220917T060000Z"})
-	ical.WriteEvents(filename, []ical.Event{{SUMMARY: "Joel", UID: 22, DTSTAMP: "20220728T205217Z", DTSTART: "20220916T203000Z", DTEND: "20220917T060000Z"},
-		{SUMMARY: "Simon", UID: 23, DTSTAMP: "20220728T205217Z", DTSTART: "20220916T203000Z", DTEND: "20220917T060000Z"}})
-	ical.FinishFile(filename)
-
-}
-
 func calHandler(w http.ResponseWriter, r *http.Request) {
 	//Get name and set Header for response
 	name := r.URL.Query()["user"][0] + ".ical"
@@ -24,7 +14,8 @@ func calHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/calendar;charset=UTF-8")
 
 	//Send File
-	makeFile(name)
+	ical.MakeFile(name, []ical.Event{{SUMMARY: "Joel", UID: 22, DTSTAMP: "20220728T205217Z", DTSTART: "20220916T203000Z", DTEND: "20220917T060000Z"},
+		{SUMMARY: "Simon", UID: 23, DTSTAMP: "20220728T205217Z", DTSTART: "20220916T203000Z", DTEND: "20220917T060000Z"}})
 	http.ServeFile(w, r, name)
 
 	//Delete File
